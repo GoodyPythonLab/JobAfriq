@@ -1,0 +1,17 @@
+{
+  "ads_master_switch": true,
+  "native_enabled": true,
+  "native_first_position": 4,
+  "native_interval": 8,
+  "banner_enabled": true,
+  "interstitial_enabled": true,
+  "interstitial_every_n_details": 4,
+  "interstitial_min_seconds_between": 180,
+  "interstitial_max_per_session": 3,
+  "app_open_enabled": false,
+  "app_open_min_background_seconds": 300,
+  "rewarded_enabled": false,
+  "rewarded_ad_free_hours": 24,
+  "min_app_version": "1.0.0",
+  "update_message": null
+}
