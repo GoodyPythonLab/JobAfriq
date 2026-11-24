@@ -1,0 +1,61 @@
+# JobAfriq scraper configuration.
+#
+# Turn a source on/off with `enabled`, or add a new one by copying a block.
+# `type` picks the parser: "nairaland" or "rss" (any standard RSS 2.0 feed).
+# `label` is the human-readable site name used in "how to apply" text.
+# `prefix` is put in front of every job ID from that source (e.g. "nl-8123456").
+
+settings:
+  # Identifies us to site owners. Add a contact URL (e.g. your repo or app page).
+  user_agent: "JobAfriqBot/1.0 (free job-alert app for Nigerian job seekers)"
+  delay_seconds: [1.5, 2.0]     # random wait between any two requests
+  timeout_seconds: 20
+  max_retries: 2                # retries after the first attempt (so max 3 tries)
+  max_jobs_total: 1000
+  page_size: 300
+  max_age_days: 30              # drop jobs older than this
+  seen_retention_days: 60       # forget processed IDs after this
+  ai:
+    max_calls_per_run: 60       # Gemini calls per run (the rest use the built-in summary)
+    min_interval_seconds: 4.5   # spacing between Gemini calls (free-tier friendly)
+
+sources:
+  - name: nairaland
+    type: nairaland
+    label: Nairaland
+    enabled: true
+    prefix: nl
+    base_url: https://www.nairaland.com
+    board: jobs                 # https://www.nairaland.com/jobs
+    pages: 2                    # read only the first N board pages
+    max_threads: 40             # cap on new threads opened per run
+    # The board is sorted by latest reply, so old threads resurface. Skip threads whose ID is
+    # more than this far below the newest one (~500 new threads/day => ~40 days).
+    max_id_gap: 20000
+    # Threads whose titles match any of these (case-insensitive regex) are skipped:
+    # board rules, people looking for work, scam warnings, etc.
+    skip_title_patterns:
+      - "\\brules\\b"
+      - "\\bi need (a )?job\\b"
+      - "\\b(seeking|looking for) (a )?(job|employment|work)\\b"
+      - "\\bjob seekers?\\b.*\\b(thread|meet)\\b"
+      - "\\bscam\\b"
+      - "\\bcv (review|writing)\\b"
+
+  - name: myjobmag
+    type: rss
+    label: MyJobMag
+    enabled: true
+    prefix: mjm
+    url: https://www.myjobmag.com/jobsxml.xml
+    # No numeric ID in MyJobMag links, so IDs are a short hash of the link.
+    max_items: 100
+
+  - name: hotnigerianjobs
+    type: rss
+    label: HotNigerianJobs
+    enabled: true
+    prefix: hnj
+    url: https://www.hotnigerianjobs.com/feed/rss.xml
+    id_pattern: "/hotjobs/(\\d+)/"   # regex on the item link; group 1 = ID
+    max_items: 200

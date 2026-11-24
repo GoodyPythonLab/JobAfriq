@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+*.egg-info/
+
+# Local secrets / settings
+.env
+.env.*
+
+# Local run output
+run-report.json
+report.json
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
